@@ -5,7 +5,7 @@ function getUser() {
 
     if (!user) {
         alert("You should inform a valid user!");
-        return Error('You should inform a valid user');
+        throw Error('You should inform a valid user');
     }
 
     return user;
@@ -15,8 +15,8 @@ function getKey() {
     const key = document.getElementById('key').value;
 
     if (!key) {
-        alert("If you do not inform a valid api key, the results will be limited!");
-        return Error('You should inform a valid api key');
+        alert("You should inform a valid api key!");
+        throw Error('You should inform a valid api key');
     }
 
     return key;
@@ -116,12 +116,18 @@ function rebuildObjOfNotFollowingMe(whoIFollowList, notFollowingMeArr) {
 document.addEventListener("DOMContentLoaded", function() {
     
     document.getElementById('check').addEventListener('click', async function() {
-
-        let spinner = document.getElementById('loading-spinner');
-        spinner.style.display = 'block';
-
+        
         const user = getUser();
         const key = getKey();
+
+        if (!user || !key) {
+            return;
+        }
+
+        let spinner = document.getElementById('loading-spinner');
+
+        spinner.style.display = 'block';
+        
         const headers =  getHeadersWithAuth(user, key);
         const followers = await listFollowersFrom(headers);
         const following = await listFollowingFrom(headers);
